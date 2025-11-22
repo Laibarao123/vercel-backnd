@@ -35,3 +35,11 @@ router.delete("/:quizId/questions/:questionIndex", deleteQuestion);
 router.put("/:quizId/questions/:questionIndex", updateQuestion);
 
 export default router;
+
+
+
+
+
+
+
+

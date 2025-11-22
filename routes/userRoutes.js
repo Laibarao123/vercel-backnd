@@ -1,14 +1,29 @@
 
 
+
 import express from "express";
-import { register, login } from "../controllers/userController.js";
+import { 
+  register, 
+  login, 
+  getAllUsers, 
+  updateUser, 
+  deleteUser ,
+  getCurrentUser,
+
+} from "../controllers/userController.js";
+import { authMiddleware } from "../middleware/auth.js"; // <-- Add this
+
 
 const router = express.Router();
 
-// POST /api/users/register
 router.post("/register", register);
-
-// POST /api/users/login
 router.post("/login", login);
+router.get("/all", getAllUsers);
+
+router.get("/current", authMiddleware, getCurrentUser);
+// ✅ New routes for edit & delete
+router.put("/:id", updateUser); // edit user
+router.delete("/:id", deleteUser); // delete user
+
 
 export default router;

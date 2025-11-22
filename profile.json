@@ -1,0 +1,28 @@
+{
+  "avatar": "https://example.com/avatar.jpg",
+  "banner": "https://example.com/banner.jpg",
+  "displayName": "Laiba Rao",
+  "username": "laibarao",
+  "bio": "This is my bio",
+  "pronouns": "she/her",
+  "links": [
+    {
+      "id": "1",
+      "label": "Portfolio",
+      "url": "https://portfolio.com"
+    },
+    {
+      "id": "2",
+      "label": "GitHub",
+      "url": "https://github.com/laibarao"
+    }
+  ],
+  "themeMode": "pastel",
+  "accent": "#7c3aed",
+  "isPublic": true,
+  "showBadgesPublic": true,
+  "selectedBadges": [
+    "b1",
+    "b2"
+  ]
+}

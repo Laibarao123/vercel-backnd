@@ -1,4 +1,85 @@
 
+
+// import mongoose from "mongoose";
+// import bcrypt from "bcryptjs";
+
+// const userSchema = new mongoose.Schema(
+//   {
+//     name: {
+//       type: String,
+//       required: [true, "Name is required"],
+//       trim: true,
+//     },
+//     email: {
+//       type: String,
+//       required: [true, "Email is required"],
+//       unique: true,
+//       lowercase: true,
+//       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
+//     },
+//     password: {
+//       type: String,
+//       required: [true, "Password is required"],
+//       minlength: [6, "Password must be at least 6 characters long"],
+//     },
+//     role: {
+//       type: String,
+//       enum: ["admin", "host", "player"], // allowed roles
+//       default: "player", // default if not selected
+//       required: true,
+//     },
+//   },
+//   { timestamps: true }
+// );
+
+// // ✅ Encrypt password before saving
+// userSchema.pre("save", async function (next) {
+//   if (!this.isModified("password")) return next();
+//   const salt = await bcrypt.genSalt(10);
+//   this.password = await bcrypt.hash(this.password, salt);
+//   next();
+// });
+
+// // ✅ Compare entered password with hashed one
+// userSchema.methods.matchPassword = async function (enteredPassword) {
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
+
+// // ✅ Remove password when returning user JSON
+// userSchema.set("toJSON", {
+//   transform: (doc, ret) => {
+//     delete ret.password;
+//     return ret;
+//   },
+// });
+
+// const User = mongoose.model("User", userSchema);
+// export default User;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -21,11 +102,27 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters long"],
     },
+    role: {
+      type: String,
+      enum: ["admin", "host", "player"], // allowed roles
+      default: "player", // default if not selected
+      required: true,
+    },
+    xp: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    level: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
   },
   { timestamps: true }
 );
 
-// Encrypt password before saving
+// ✅ Encrypt password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -33,12 +130,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Method to compare passwords
+// ✅ Compare entered password with hashed one
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Remove password from JSON responses
+// ✅ Remove password when returning user JSON
 userSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.password;
