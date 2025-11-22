@@ -61,11 +61,11 @@
 
 
 
-
+// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
+import mongoose from "mongoose";
 
 // Route imports
 import userRouter from "./routes/userRoutes.js";
@@ -87,16 +87,12 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to Database
-// Must await the connection to avoid crashing serverless function
-await connectDB();
-
-// Routes
+// ✅ Routes
 app.use("/api/auth", userRouter);
 app.use("/api/quiz", quizRouter);
 app.use("/api/rooms", roomRouter);
@@ -112,10 +108,36 @@ app.use("/api/logs", activityLogRoutes);
 app.use("/api/achievements", achievementRoutes); 
 app.use("/api/profile", profileRoutes);
 
-// Test route
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("✅ API WORKING SUCCESSFULLY");
 });
 
-// ✅ Export app as default for Vercel serverless function
-export default app;
+// --- MongoDB singleton connection for serverless ---
+let cached = global.mongoose;
+if (!cached) cached = global.mongoose = { conn: null, promise: null };
+
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }).then(m => m);
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// --- Vercel serverless handler ---
+export default async function handler(req, res) {
+  try {
+    await connectDB();       // Connect DB if not already connected
+    app(req, res);           // Pass request to Express app
+  } catch (err) {
+    console.error("Serverless function error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
